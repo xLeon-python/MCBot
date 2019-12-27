@@ -1,3 +1,5 @@
+#Version: 0.1.2
+
 from __future__ import print_function
 
 import sys, json, time
