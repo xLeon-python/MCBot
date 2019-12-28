@@ -1,3 +1,5 @@
+#Version: 0.1.2
+
 import os
 from bs4 import BeautifulSoup
 import requests
@@ -25,7 +27,7 @@ def colorize(string, color):
 
 def run():
     print(colorize("Running Bot...", 'green'))
-    p = Popen(["python", "bot.py"])
+    p = Popen(["python", "Lib/bot.py"])
     p.communicate()
     input("Press [Enter] to continue...")
 
@@ -37,7 +39,7 @@ def check_update():
 
     version = str(soup).split("\n")[0].split(": ")[1]
 
-    file = open('bot.py').read().split("\n")[0].split(": ")[1]
+    file = open('Lib/bot.py').read().split("\n")[0].split(": ")[1]
     if int(version.replace(".", "")) > int(file.replace(".", "")):
         print(colorize("Update wurde gefunden", 'green'))
         print("Neue Version: " + version)
@@ -46,7 +48,7 @@ def check_update():
         choice = input(">> ")
         if int(choice) == 0:
             print(colorize("\nInstalling...", "green"))
-            file = open("bot.py", "w")
+            file = open("Lib/bot.py", "w")
             file.write(str(soup))
             file.close()
             print(colorize("\nUpdate complete", "green"))
@@ -64,7 +66,7 @@ def main():
     while True:
         # Print some badass ascii art header here !
         print(colorize(header, 'pink'))
-        version = open('bot.py').read().split("\n")[0].split(": ")[1]
+        version = open('Lib/bot.py').read().split("\n")[0].split(": ")[1]
         print(colorize("Version: " + version + '\n', 'green'))
         for item in menuItems:
             print(colorize("[" + str(menuItems.index(item)) + "] ", 'blue') + list(item.keys())[0])
