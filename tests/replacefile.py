@@ -60,11 +60,11 @@ def print_incoming(packet):
         # This is a direct instance of the base Packet type, meaning
         # that it is a packet of unknown type, so we do not print it.
         return
-    print('--> %s' % packet, file=sys.stderr)
+    print('--&gt; %s' % packet, file=sys.stderr)
 
 
 def print_outgoing(packet):
-    print('<-- %s' % packet, file=sys.stderr)
+    print('&lt;-- %s' % packet, file=sys.stderr)
 
 
 connection.register_packet_listener(print_incoming, Packet, early=True)
