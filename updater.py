@@ -64,4 +64,4 @@ for i in directories:
         shutil.rmtree(path + "/" + i)
 '''
 print(path)
-print(subprocess.check_output(["RD", "/S", "/Q", '"' + path + '"']))
+print(subprocess.check_output(["rmdir", path]))
