@@ -1,4 +1,4 @@
-#Version: 0.1.1
+#Version: 0.1.2
 
 from __future__ import print_function
 
