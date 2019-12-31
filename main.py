@@ -48,9 +48,9 @@ def check_update():
         choice = input(">> ")
         if int(choice) == 0:
             print(colorize("\nInstalling...", "green"))
-            file = open("Lib/bot.py", "w")
-            file.write(str(soup))
-            file.close()
+            p = Popen(["python", ""])
+            p.communicate()
+            p.kill()
             print(colorize("\nUpdate complete", "green"))
     else:
         print(colorize("Es wurde kein Update gefunden", 'green'))
