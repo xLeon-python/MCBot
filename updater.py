@@ -67,4 +67,3 @@ for i in directories:
 '''
 print(path)
 shutil.rmtree(path)
-print(subprocess.check_output(["rmdir", path]))
