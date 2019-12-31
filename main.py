@@ -48,7 +48,7 @@ def check_update():
         choice = input(">> ")
         if int(choice) == 0:
             print(colorize("\nInstalling...", "green"))
-            p = Popen(["python", ""])
+            p = Popen(["python", "updater.py"])
             p.communicate()
             p.kill()
             print(colorize("\nUpdate complete", "green"))
