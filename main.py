@@ -33,7 +33,7 @@ def run():
 
 
 def check_update():
-    url = "https://raw.githubusercontent.com/xLeon-python/MCBot/master/bot.py"
+    url = "https://raw.githubusercontent.com/xLeon-python/MCBot/master/Lib/bot.py"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
 
