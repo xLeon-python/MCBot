@@ -1,4 +1,4 @@
-#Version: 0.1.2
+#Version: 0.1.4
 
 import os
 from bs4 import BeautifulSoup
