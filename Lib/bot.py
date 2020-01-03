@@ -18,7 +18,7 @@ from minecraft.networking.types import (
     Position, PositionAndLook, RelativeHand, BlockFace,
 )
 
-import random, time, sys, base64, json, asyncio, requests, traceback
+import random, time, sys, base64, json, asyncio, requests, traceback, os
 import discord
 import aiohttp
 from bs4 import BeautifulSoup
@@ -33,13 +33,13 @@ from discord import Webhook, AsyncWebhookAdapter
 from discord.ext.commands import Bot, check
 import discord.ext.commands
 
-with open("config.json", encoding="utf-8") as json_file:
+with open(os.path.join(os.pardir, "config.json"), encoding="utf-8") as json_file:
     config = json.load(json_file)
     TOKEN = config['token']
     CHANNEL = config['channelID']
     webhook_url = config['webhook']
     ACCOUNT = config["mcAcc"].split(":")
-    admins = config["admins"]
+    #ACCOUNT =
     custom_answers = config["custom"]
 auth_token = authentication.AuthenticationToken()
 #auth_token.authenticate(ACCOUNT[0], ACCOUNT[1])

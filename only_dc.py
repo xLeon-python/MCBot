@@ -14,6 +14,8 @@ with open("config.json", encoding="utf-8") as json_file:
     TOKEN = config['token']
     CHANNEL = config['channelID']
     webhook_url = config['webhook']
+with open("custom_answers.json", encoding="utf-8") as json_file:
+    config = json.load(json_file)
     custom_answers = config["custom"]
 
 bot = Bot("-")
@@ -28,6 +30,12 @@ async def on_command_error(ctx, error):
     #print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
     traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
+@bot.event
+async def on_ready():
+    print("Bot ist online")
+    print("Bot Name: " + bot.user.name)
+    print("Bot ID: " + str(bot.user.id))
+
 @bot.listen("on_message")
 async def sync(message):
     if message.author.bot == True:
@@ -39,6 +47,7 @@ async def sync(message):
         author = message.author
         roles = author.roles
         content = message.content
+
         for i in roles:
             if i.colour == discord.Color.blue():
                 ignname = i.name
@@ -46,8 +55,33 @@ async def sync(message):
         print(ignname + ": " + content)
         await message.delete()
         avatar = "https://mc-heads.net/avatar/"+str(ignname)
+
+        if content == "offline":
+            embed = discord.Embed(title="offline", color=discord.Colour.red())
+            await write_chat_embed(ignname, avatar, embed)
+            return
+        elif content == "online":
+            embed = discord.Embed(title="online", color=discord.Colour.green())
+            await write_chat_embed(ignname, avatar, embed)
+            return
+
+
         await write_chat(ignname, content, avatar)
 
+        for i in custom_answers:
+            if i["name"] == content:
+                avatar = "https://mc-heads.net/avatar/checkerbot"
+                content = i["answer"][0]
+                await write_chat("checkerbot", content, avatar)
+                print("checkerbot: " + content)
+                return
+    else:
+        for i in custom_answers:
+            if i["name"] == message.content:
+                avatar = "https://mc-heads.net/avatar/checkerbot"
+                content = i["answer"][0]
+                await message.channel.send(content)
+                return
 def check_channel(ctx):
     if str(ctx.message.channel.id) == CHANNEL:
         return False
@@ -73,6 +107,9 @@ async def verify(ctx, role_name, member: discord.Member):
 
 @bot.command()
 async def kills(ctx, ign):
+
+    def check(m):
+        return m.author.bot
     try:
         url = 'https://www.gommehd.net/player/index?playerName=' + ign
         response = requests.get(url)
@@ -81,9 +118,10 @@ async def kills(ctx, ign):
         gungame = soup.find("div", {"id": "gungame"})
         score = gungame.find('span', attrs={'class': 'score'})
 
-        await ctx.send("Kills von " + str(ign) + ": " + score.text)
         if str(ctx.message.channel.id) == CHANNEL:
+            await bot.wait_for("message", check=check)
             print("Kills von " + str(ign) + ": " + score.text)
+        await ctx.send("Kills von " + str(ign) + ": " + score.text)
     except Exception as e:
         await ctx.send("Etwas ist schief gelaufen :/")
         print(e)
@@ -117,26 +155,44 @@ async def nh(ctx, ign):
 
 @bot.command()
 async def set(ctx, trigger, answer):
-    with open("config.json", encoding="utf-8") as json_file:
+    with open("custom_answers.json", encoding="utf-8") as json_file:
         config = json.load(json_file)
-        custom_answers = config["custom"]
+        custom = config["custom"]
         skip = False
-        for i in custom_answers:
+        for i in custom:
             if i["name"].lower() == trigger.lower():
-                i["answer"] = answer
+                i["answer"] = [answer]
                 skip = True
         if skip == False:
-            custom_answers.append({"name": trigger,
-                                   "answer": answer})
-        config["custom"] = custom_answers
-    jsonFile = open("config.json", "w+")
+            custom.append({"name": trigger,
+                                   "answer": [answer]})
+        config["custom"] = custom
+    jsonFile = open("custom_answers.json", "w+")
     jsonFile.write(json.dumps(config))
     jsonFile.close()
+
+    with open("custom_answers.json", encoding="utf-8") as json_file:
+        config = json.load(json_file)
+        global custom_answers
+        custom_answers = config["custom"]
+
+    await ctx.send("Der Befehl " + trigger + " hat nun die Antwort '" + answer + "'")
+
+
+@bot.command()
+async def test(ctx):
+    pass
 
 async def write_chat(ignname, content, avatar):
     url = urlparse(avatar)
     async with aiohttp.ClientSession() as session:
         webhook = Webhook.from_url(webhook_url, adapter=AsyncWebhookAdapter(session))
         await webhook.send(content, username=ignname, avatar_url=url.geturl())
+
+async def write_chat_embed(ignname, avatar, embed):
+    url = urlparse(avatar)
+    async with aiohttp.ClientSession() as session:
+        webhook = Webhook.from_url(webhook_url, adapter=AsyncWebhookAdapter(session))
+        await webhook.send(username=ignname, avatar_url=url.geturl(), embed=embed)
 
 bot.run(TOKEN)
